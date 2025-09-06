@@ -1,0 +1,157 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Accessibility Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="AI-powered accessibility assistant for visually and hearing impaired users">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="glass-card header">
+            <h1><i class="fas fa-universal-access"></i> AI Accessibility Assistant</h1>
+            <p>Empowering communication through AI technology</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="glass-card nav-card" role="navigation" aria-label="Main navigation">
+            <button class="nav-btn active" data-feature="image-to-speech" aria-describedby="image-to-speech-desc">
+                <i class="fas fa-image"></i>
+                <span>Image to Speech</span>
+            </button>
+            <button class="nav-btn" data-feature="text-to-speech" aria-describedby="text-to-speech-desc">
+                <i class="fas fa-file-text"></i>
+                <span>Text to Speech</span>
+            </button>
+            <button class="nav-btn" data-feature="speech-to-sign" aria-describedby="speech-to-sign-desc">
+                <i class="fas fa-microphone"></i>
+                <span>Speech to Text</span>
+            </button>
+        </nav>
+
+        <!-- Feature Descriptions (Screen Reader) -->
+        <div class="sr-only">
+            <div id="image-to-speech-desc">Upload an image or document to extract and read text aloud</div>
+            <div id="text-to-speech-desc">Paste text to summarize and read aloud</div>
+            <div id="speech-to-sign-desc">Speak into microphone to convert to text language</div>
+        </div>
+
+        <!-- Feature Sections -->
+        <main>
+            <!-- Image to Speech Section -->
+            <section id="image-to-speech" class="feature-section active">
+                <div class="glass-card">
+                    <h2><i class="fas fa-image"></i> Image to Speech</h2>
+                    <p>Upload an image or document to extract text and convert it to speech</p>
+                    
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop an image here, or click to select</p>
+                        <input type="file" id="image-input" accept="image/*,.pdf" aria-label="Upload image or PDF file">
+                    </div>
+                    
+                    <div class="controls">
+                        <label for="image-language">Language:</label>
+                        <select id="image-language" aria-label="Select language for text-to-speech">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    
+                    <div id="image-result" class="result-area" aria-live="polite"></div>
+                </div>
+            </section>
+
+            <!-- Text to Speech Section -->
+            <section id="text-to-speech" class="feature-section">
+                <div class="glass-card">
+                    <h2><i class="fas fa-file-text"></i> Text to Speech</h2>
+                    <p>Paste long text to summarize and convert to speech</p>
+                    
+                    <div class="text-input-area">
+                        <textarea id="text-input" placeholder="Paste your text here..." aria-label="Text input for conversion to speech"></textarea>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="text-language">Language:</label>
+                            <select id="text-language" aria-label="Select language for text-to-speech">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="hi">Hindi</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="summarize-toggle" aria-describedby="summarize-desc">
+                                Summarize text
+                            </label>
+                            <div id="summarize-desc" class="sr-only">When enabled, long text will be summarized before conversion to speech</div>
+                        </div>
+                        <button id="text-to-speech-btn" class="primary-btn">
+                            <i class="fas fa-volume-up"></i> Convert to Speech
+                        </button>
+                    </div>
+                    
+                    <div id="text-result" class="result-area" aria-live="polite"></div>
+                </div>
+            </section>
+
+            <!-- Speech to Sign Section -->
+            <section id="speech-to-sign" class="feature-section">
+                <div class="glass-card">
+                    <h2><i class="fas fa-microphone"></i> Speech to Text Language</h2>
+                    <p>Speak into your microphone to convert speech to Text language</p>
+                    
+                    <div class="recording-area">
+                        <button id="record-btn" class="record-btn" aria-label="Start/stop recording">
+                            <i class="fas fa-microphone"></i>
+                            <span>Click to Record</span>
+                        </button>
+                        <div id="recording-status" class="recording-status" aria-live="polite"></div>
+                    </div>
+                    
+                    <div id="speech-result" class="result-area" aria-live="polite"></div>
+                    <div id="sign-animation" class="sign-animation-area"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Processing...</p>
+            </div>
+        </div>
+
+        <!-- Audio Player (Hidden) -->
+        <audio id="audio-player" controls style="display: none;" aria-label="Generated speech audio"></audio>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-card footer">
+        <p>&copy; 2024 AI Accessibility Assistant. Making technology accessible for everyone.</p>
+        <div class="footer-links">
+            <a href="#" aria-label="Privacy policy">Privacy</a>
+            <a href="#" aria-label="Terms of service">Terms</a>
+            <a href="#" aria-label="Accessibility statement">Accessibility</a>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
